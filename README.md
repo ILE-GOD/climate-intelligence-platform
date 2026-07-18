@@ -211,7 +211,9 @@ climate-intelligence-platform/
 
 ├── config/
 
-├── dags/
+├── airflow/
+
+│   ├── dags/
 
 ├── data/
 
