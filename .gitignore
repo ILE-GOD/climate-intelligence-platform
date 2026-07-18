@@ -1,34 +1,15 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.egg-info/
-
-# Virtual Environment
+cat > .gitignore <<'EOF'
 .venv/
 venv/
-env/
-
-# Airflow
-airflow.db
-logs/
-
-# Environment Variables
 .env
 
-# VS Code
-.vscode/
+__pycache__/
+*.py[cod]
 
-# macOS
-.DS_Store
+data/raw/*
+data/processed/*
+logs/*
 
-# Pytest
 .pytest_cache/
-
-# Coverage
-.coverage
-htmlcov/
-
-# Jupyter
-.ipynb_checkpoints/
+.vscode/
+EOF
