@@ -245,6 +245,8 @@ climate-intelligence-platform/
 
 │   ├── calculate_risk.py
 
+│   ├── inspect_data.py    
+
 │   ├── load_to_gcs.py
 
 │   ├── load_to_bigquery.py
@@ -298,6 +300,10 @@ Feature Engineering
 ↓
 
 Risk Assessment
+
+↓
+
+Inspect data
 
 ↓
 
