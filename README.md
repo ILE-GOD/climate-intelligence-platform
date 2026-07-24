@@ -284,11 +284,11 @@ gold_rainfall_trends
 
 ---
 
-# 🚧 Roadmap
+# 🚧 Roadmap (Project Pogress)
 
-| Status | Feature |
+| Stage | Status |
 |---------|----------|
-| ✅ Project Setup |
+| ✅ Project Setup |Completed
 | ✅ API Integration |
 | ✅ Extraction Layer |
 | ✅ Validation Layer |
