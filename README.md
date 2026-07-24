@@ -289,10 +289,11 @@ gold_rainfall_trends
 | Stage | Status |
 |---------|----------|
 | ✅ Project Setup |Completed
-| ✅ API Integration |
-| ✅ Extraction Layer |
-| ✅ Validation Layer |
-| ✅ Transformation Layer |
+| ✅ API Integration |Completed
+| ✅ Extraction Layer |Completed
+| ✅ Validation Layer |Completed
+| ✅ Transformation Layer |Completed
+| ✅ Docker |Completed
 | ⏳ Google Cloud Storage |
 | ⏳ BigQuery Loading |
 | ⏳ Airflow DAG |
