@@ -1,0 +1,15 @@
+services:
+
+  climate-pipeline:
+
+    build: .
+
+    container_name: climate-pipeline
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./data:/app/data
+
+    command: python -m scripts.run_pipeline

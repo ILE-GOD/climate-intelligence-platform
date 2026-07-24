@@ -47,10 +47,8 @@ def fetch_weather(lat, lon):
 
     response = requests.get(url, timeout=30)
 
-    # Raise an error if the API request failed
     response.raise_for_status()
 
-    # Convert the response to Python dictionary
     data = response.json()
 
     return data
@@ -65,64 +63,88 @@ def save_raw(data, location_name):
     Save raw API response as a timestamped JSON file.
     """
 
-    # Create data/raw directory if it does not exist
     raw_directory = Path("data/raw")
-    raw_directory.mkdir(parents=True, exist_ok=True)
 
-    # Create timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    raw_directory.mkdir(
+        parents=True,
+        exist_ok=True
+    )
 
-    # Create filename
+    timestamp = datetime.now().strftime(
+        "%Y%m%d_%H%M%S"
+    )
+
     filename = f"{location_name}_{timestamp}.json"
 
-    # Create complete file path
     file_path = raw_directory / filename
 
-    # Save JSON data
     with open(file_path, "w") as file:
-        json.dump(data, file, indent=4)
+
+        json.dump(
+            data,
+            file,
+            indent=4
+        )
 
     return file_path
 
 
 # --------------------------------------------------
-# 5. MAIN FUNCTION
+# 5. PIPELINE FUNCTION
 # --------------------------------------------------
 
-def main():
+def extract():
+    """
+    Execute the complete data extraction process.
 
-    try:
+    This function:
+    1. Fetches weather data from the API.
+    2. Saves the raw response to data/raw.
+    3. Returns the path to the saved file.
+    """
 
-        logging.info("Starting weather data extraction...")
+    logging.info(
+        "Starting weather data extraction..."
+    )
 
-        # Extract data
-        weather_data = fetch_weather(
-            LATITUDE,
-            LONGITUDE
-        )
+    # Fetch data from API
+    weather_data = fetch_weather(
+        LATITUDE,
+        LONGITUDE
+    )
 
-        logging.info("Weather data successfully fetched.")
+    logging.info(
+        "Weather data successfully fetched."
+    )
 
-        # Save raw data
-        file_path = save_raw(
-            weather_data,
-            LOCATION_NAME
-        )
+    # Save raw data
+    file_path = save_raw(
+        weather_data,
+        LOCATION_NAME
+    )
 
-        logging.info(
-            f"Raw weather data saved to: {file_path}"
-        )
+    logging.info(
+        f"Raw weather data saved to: {file_path}"
+    )
 
-    except Exception as error:
-
-        logging.error(
-            f"Weather extraction failed: {error}"
-        )
+    return file_path
 
 
 # --------------------------------------------------
-# 6. RUN THE PROGRAM
+# 6. RUN DIRECTLY
 # --------------------------------------------------
 
 if __name__ == "__main__":
-    main()
+
+    try:
+
+        extract()
+
+    except Exception as error:
+
+        logging.exception(
+            "Weather extraction failed: %s",
+            error
+        )
+
+        raise

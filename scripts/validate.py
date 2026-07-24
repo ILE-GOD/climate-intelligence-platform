@@ -132,7 +132,7 @@ def validate_file(file_path):
     return report
 
 
-def main():
+def validate():
 
     raw_directory = Path("data/raw")
 
@@ -143,11 +143,17 @@ def main():
 
     if not json_files:
 
-        logging.warning(
-            "No JSON files found."
+        error_message = (
+            "No JSON files found in data/raw."
         )
 
-        return
+        logging.error(
+            error_message
+        )
+
+        raise FileNotFoundError(
+            error_message
+        )
 
     # Validate the latest file
     latest_file = max(
@@ -168,6 +174,8 @@ def main():
         logging.info(
             "Validation successful!"
         )
+        
+        return report
 
     else:
 
@@ -181,6 +189,10 @@ def main():
                 f"- {error}"
             )
 
+        raise ValueError(
+            "Data validation failed."
+        )
+
 
 if __name__ == "__main__":
-    main()
+    validate()

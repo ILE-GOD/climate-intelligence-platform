@@ -100,7 +100,11 @@ def save_processed_data(df):
     )
 
 
-def main():
+def transform():
+
+    logging.info(
+        "Starting data transformation..."
+    )
 
     data = load_latest_json()
 
@@ -112,10 +116,13 @@ def main():
         df
     )
 
-    print("\nTransformed Data:")
-    print(df)
+    logging.info(
+        "Data transformation completed successfully."
+    )
+
+    return df
 
 
 if __name__ == "__main__":
 
-    main()
+    transform()

@@ -1,7 +1,12 @@
+import logging
 import pandas as pd
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-def flood_risk_score(
+def flash_flood_risk(
     rainfall_3_day
 ):
 
@@ -17,6 +22,37 @@ def flood_risk_score(
 
         return "NORMAL"
 
+def sustained_flood_risk(
+    rainfall_7_day
+):
+
+    if rainfall_7_day >= 100:
+
+        return "CRITICAL"
+
+    elif rainfall_7_day >= 60:
+
+        return "WARNING"
+
+    else:
+
+        return "NORMAL"
+
+def soil_saturation_risk(
+    rainfall_7_day
+):
+
+    if rainfall_7_day >= 100:
+
+        return "HIGH"
+
+    elif rainfall_7_day >= 60:
+
+        return "MEDIUM"
+
+    else:
+
+        return "LOW"
 
 def crop_stress_index(
     temperature
@@ -51,13 +87,26 @@ def pond_overflow_risk(
 
         return "LOW"
 
-
 def calculate_risks(df):
 
     df["flood_risk"] = (
         df["rainfall_3_day_total"]
         .apply(
-            flood_risk_score
+            flash_flood_risk
+        )
+    )
+
+    df["sustained_flood_risk"] = (
+        df["rainfall_7_day_total"]
+        .apply(
+            sustained_flood_risk
+        )
+    )
+
+    df["soil_saturation_risk"] = (
+        df["rainfall_7_day_total"]
+        .apply(
+            soil_saturation_risk
         )
     )
 
@@ -77,8 +126,11 @@ def calculate_risks(df):
 
     return df
 
+def calculate_risk():
 
-def main():
+    logging.info(
+        "Starting risk calculations..."
+    )
 
     input_file = (
         "data/processed/"
@@ -106,13 +158,17 @@ def main():
         index=False
     )
 
-    print(
-        "Risk calculations completed."
+    logging.info(
+        f"Risk data saved to: {output_file}"
     )
 
-    print(df)
+    logging.info(
+        "Risk calculations completed successfully."
+    )
+
+    return df
 
 
 if __name__ == "__main__":
 
-    main()
+    calculate_risk()

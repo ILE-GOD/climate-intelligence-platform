@@ -19,14 +19,17 @@ print(df.describe())
 
 # Display the most important risk columns
 print("\nRisk summary:")
+risk_columns = [
+    "date",
+    "rainfall_3_day_total",
+    "rainfall_7_day_total",
+    "flood_risk",
+    "sustained_flood_risk",
+    "soil_saturation_risk",
+    "crop_stress",
+    "pond_overflow_risk"
+]
+
 print(
-    df[
-        [
-            "date",
-            "rainfall_3_day_total",
-            "flood_risk",
-            "crop_stress",
-            "pond_overflow_risk"
-        ]
-    ]
+    df[risk_columns]
 )

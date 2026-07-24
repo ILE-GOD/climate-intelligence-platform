@@ -1,5 +1,10 @@
+import logging
 import pandas as pd
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def add_features(df):
 
@@ -37,7 +42,11 @@ def add_features(df):
     return df
 
 
-def main():
+def feature_engineering():
+
+    logging.info(
+        "Starting feature engineering..."
+    )
 
     input_file = (
         "data/processed/weather.parquet"
@@ -63,13 +72,15 @@ def main():
         index=False
     )
 
-    print(
-        "Feature engineering completed."
+    logging.info(
+        f"Feature-engineered data saved to: {output_file}"
     )
 
-    print(df)
+    logging.info(
+        "Feature engineering completed successfully."
+    )
 
+    return df
 
 if __name__ == "__main__":
-
-    main()
+    feature_engineering()

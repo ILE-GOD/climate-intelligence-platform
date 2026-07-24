@@ -13,3 +13,5 @@ logs/*
 .pytest_cache/
 .vscode/
 EOF
+
+config/gcp-key.json
