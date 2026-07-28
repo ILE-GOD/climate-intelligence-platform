@@ -50,16 +50,16 @@ The project aims to:
 
 Heavy rainfall and flooding continue to cause:
 
-- Crop destruction
+- Crop destruction due soil water saturation
 - Fish pond overflow
 - Soil erosion
 - Infrastructure damage
 - Disease outbreaks
 - Economic losses
 
-Although weather data is publicly available, most organizations lack automated systems that transform raw weather data into actionable intelligence.
+Although weather data is publicly available, most organizations lack automated systems that transform raw weather data and reports into actionable intelligence to prevent future disasters or losses.
 
-This platform bridges that gap.
+This project / platform bridges that gap.
 
 ---
 
@@ -160,25 +160,40 @@ The processed datasets are loaded into BigQuery where they can be analyzed using
 
 # 🏗 Medallion Architecture
 
-Bronze
-
-Raw API JSON Files
-
-↓
-
-Silver
-
-Validated & Cleaned Parquet
-
-↓
-
-Gold
-
+Weather API
+    │
+    ▼
+Bronze Layer
+Raw weather data (API JSON Files)
+    │
+    ▼
+Silver Layer (Validated & Cleaned Parquet)
+weather_risk.parquet
+    │
+    ▼
+GCS
+gs://climate-intel-raw-data-2026/
+└── silver/
+    └── 2026-07-25/
+        └── weather_risk.parquet
+    │
+    ▼
+Gold Layer
 BigQuery Analytical Tables
+capable-avatar-475900-j5
+└── climate_gold
+    ├── weather_risk
+    ├── gold_weather_summary
+    ├── gold_flood_risk
+    ├── gold_agriculture_advisory
+    ├── gold_aquaculture_advisory
+    ├── gold_heat_stress
+    ├── gold_weather_forecast
+    └── gold_rainfall_trends
 
-↓
-
-Looker Studio Dashboards
+    │
+    ▼
+    Looker Studio Dashboards
 
 ---
 
@@ -196,6 +211,42 @@ Looker Studio Dashboards
 | API | Open-Meteo API |
 | Configuration | python-dotenv |
 | Cloud SDK | Google Cloud SDK |
+
+---
+
+# 🚧 Roadmap (Project Pogress)
+
+| Stage | Status |
+|---------|----------|
+| ✅ Project Setup |Completed
+| ✅ API Integration |Completed
+| ✅ Extraction Layer |Completed
+| ✅ Validation Layer |Completed
+| ✅ Transformation Layer |Completed
+| ✅ Docker |Completed
+| ⏳ Google Cloud Storage |
+| ⏳ BigQuery Loading |
+| ⏳ Airflow DAG |
+| ⏳ Looker Studio Dashboard |
+| ⏳ Data Quality Tests |
+| ⏳ GitHub Actions |
+| ⏳ CI/CD Pipeline |
+| ⏳ Machine Learning Flood Prediction |
+
+---
+
+# 🔮 Future Enhancements
+
+- Weather anomaly detection
+- Flood prediction using Machine Learning
+- Google Maps flood visualization
+- WhatsApp alert system
+- Email notification service
+- dbt transformations
+- Great Expectations
+- Terraform deployment
+- Kubernetes deployment
+- Real-time streaming using Apache Kafka
 
 ---
 
@@ -281,42 +332,6 @@ gold_rainfall_trends
 - BigQuery Loading
 - Dockerized Environment
 - Apache Airflow Orchestration
-
----
-
-# 🚧 Roadmap (Project Pogress)
-
-| Stage | Status |
-|---------|----------|
-| ✅ Project Setup |Completed
-| ✅ API Integration |Completed
-| ✅ Extraction Layer |Completed
-| ✅ Validation Layer |Completed
-| ✅ Transformation Layer |Completed
-| ✅ Docker |Completed
-| ⏳ Google Cloud Storage |
-| ⏳ BigQuery Loading |
-| ⏳ Airflow DAG |
-| ⏳ Looker Studio Dashboard |
-| ⏳ Data Quality Tests |
-| ⏳ GitHub Actions |
-| ⏳ CI/CD Pipeline |
-| ⏳ Machine Learning Flood Prediction |
-
----
-
-# 🔮 Future Enhancements
-
-- Weather anomaly detection
-- Flood prediction using Machine Learning
-- Google Maps flood visualization
-- WhatsApp alert system
-- Email notification service
-- dbt transformations
-- Great Expectations
-- Terraform deployment
-- Kubernetes deployment
-- Real-time streaming using Apache Kafka
 
 ---
 

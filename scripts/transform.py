@@ -3,6 +3,10 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+import os
+
+DATA_RAW_DIR = os.environ.get("DATA_RAW_DIR", "/opt/airflow/data/raw")
+DATA_PROCESSED_DIR = os.environ.get("DATA_PROCESSED_DIR", "/opt/airflow/data/processed")
 
 
 logging.basicConfig(
@@ -89,6 +93,10 @@ def save_processed_data(df):
         processed_directory
         / "weather.parquet"
     )
+
+    df["date"] = pd.to_datetime(
+        df["date"]
+    ).dt.date
 
     df.to_parquet(
         output_file,

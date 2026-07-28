@@ -1,5 +1,9 @@
 import logging
 import pandas as pd
+import os
+
+
+DATA_PROCESSED_DIR = os.environ.get("DATA_PROCESSED_DIR", "/opt/airflow/data/processed")
 
 logging.basicConfig(
     level=logging.INFO,

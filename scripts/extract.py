@@ -2,9 +2,10 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-
 import requests
+import os
 
+DATA_RAW_DIR = os.environ.get("DATA_RAW_DIR", "/opt/airflow/data/raw")
 
 # --------------------------------------------------
 # 1. BASIC CONFIGURATION
@@ -45,7 +46,7 @@ def fetch_weather(lat, lon):
         "&timezone=Africa%2FLagos"
     )
 
-    response = requests.get(url, timeout=30)
+    response = requests.get(url, timeout=10)
 
     response.raise_for_status()
 

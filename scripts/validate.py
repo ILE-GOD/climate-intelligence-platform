@@ -1,6 +1,9 @@
 import json
 import logging
 from pathlib import Path
+import os
+
+DATA_RAW_DIR = os.environ.get("DATA_RAW_DIR", "/opt/airflow/data/raw")
 
 
 logging.basicConfig(
