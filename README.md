@@ -17,7 +17,7 @@
 
 Climate-related disasters such as flooding, prolonged rainfall, and heat stress continue to threaten agriculture, aquaculture, infrastructure, food security, and public safety. Although weather information is publicly available, many organizations still lack automated systems that transform raw weather observations into actionable insights.
 
-The **Climate Intelligence & Flood Early Warning Platform** is a production-inspired Data Engineering project that automates the complete weather analytics lifecycle—from data extraction to decision-ready dashboards.
+The **Climate Intelligence & Flood Early Warning Platform** is a production-inspired Data Engineering project that automates the complete weather analytics lifecycle from data extraction to decision-ready dashboards.
 
 The platform:
 
@@ -321,27 +321,8 @@ climate-intelligence-platform/
 
 # 🌐 Data Sources
 
-The platform currently consumes weather data from publicly available APIs and is designed to support multiple weather providers.
-
-| Source | Purpose | Status |
-|---------|----------|--------|
-| Open-Meteo API | Weather Forecast | ✅ Active |
-| NASA POWER API | Climate Data | 🚧 Planned |
-| OpenWeather API | Weather Forecast | 🚧 Planned |
-| NiMet API | Nigerian Weather | 🚧 Future |
-| NIHSA Flood Data | Flood Monitoring | 🚧 Future |
-
-## Current API
-
-Open-Meteo provides:
-
-- Current Weather
-- Daily Forecast
-- Rainfall
-- Temperature
-- Humidity
-- Wind
-- Forecast Models
+The platform currently consumes weather data from publicly available APIs and is designed to support multiple weather providers such as; Open-Meteo API, NASA POWER API, OpenWeather API, NiMet API | Nigerian Weather, NIHSA Flood Data.
+Open-Meteo API used provides data such: Current Weather, Daily Forecast, Rainfall, Temperature, Humidity, Wind, Forecast Models
 
 ### API Documentation
 
@@ -361,119 +342,13 @@ https://api.open-meteo.com/v1/forecast
 
 ---
 
-# 📦 Data Model
+# 📦 Data Model (Medallion Architecture)
 
-The project follows the Medallion Architecture.
-
-## Bronze Layer
-
-Purpose
-
-Store immutable raw API responses.
-
-Storage
-
-```
-data/raw/
-```
-
-Format
-
-```
-JSON
-```
-
-Example
-
-```json
-{
-  "metadata": {
-      "location": "lagos",
-      "latitude": 6.4531,
-      "longitude": 3.3958,
-      "extracted_at": "2026-07-28T14:42:25"
-  },
-  "weather": {
-      ...
-  }
-}
-```
-
-Characteristics
-
-- Raw
-- Unmodified
-- Timestamped
-- Historical Archive
-
----
-
-## Silver Layer
-
-Purpose
-
-Store validated and cleaned datasets ready for analytics.
-
-Storage
-
-```
-data/processed/
-```
-
-Format
-
-```
-Parquet
-```
-
-Example Files
-
-```
-lagos_20260728_144225.parquet
-
-lagos_20260728_144225_features.parquet
-
-lagos_20260728_144225_risk.parquet
-```
-
-Contains
-
-- Clean Weather Data
-- Engineered Features
-- Flood Risk Indicators
-- Metadata
-- Timestamp
-
----
-
-## Gold Layer
-
-Purpose
-
-Business-ready analytical datasets.
-
-Platform
-
-Google BigQuery
-
-Dataset
-
-```
-climate_gold
-```
-
-Table
-
-```
-weather_risk
-```
-
-Optimized for
-
-- SQL Analytics
-- Dashboarding
-- Reporting
-- Decision Support
+| Layer | Purpose | Storage | Format | Key Outputs |
+|--------|---------|---------|--------|-------------|
+| 🥉 **Bronze** | Stores immutable raw weather API responses for auditing and historical tracking. | `data/raw/` | JSON | Timestamped raw weather data with metadata (location, coordinates, extraction time). |
+| 🥈 **Silver** | Stores validated, cleaned, and feature-engineered datasets for downstream processing. | `data/processed/` | Parquet | Clean weather data, engineered features, flood risk indicators, and metadata. |
+| 🥇 **Gold** | Stores analytics-ready datasets optimized for reporting and decision support. | Google BigQuery (`climate_gold.weather_risk`) | BigQuery Table | Business-ready datasets for SQL analytics, dashboards, reporting, and climate intelligence. |
 
 ---
 
@@ -499,159 +374,6 @@ The final analytical dataset contains the following fields.
 | soil_saturation_risk | STRING | Soil saturation level |
 | crop_stress | STRING | Heat stress indicator |
 | pond_overflow_risk | STRING | Aquaculture flood risk |
-
----
-
-# 🔄 Incremental Processing Strategy
-
-Instead of reprocessing every historical file during each pipeline execution, the platform uses incremental processing.
-
-Each Airflow run processes only the newest dataset.
-
-## Extraction
-
-Creates
-
-```
-lagos_20260728_144225.json
-```
-
-↓
-
-## Validation
-
-Validates only
-
-```
-Newest JSON
-```
-
-↓
-
-## Transformation
-
-Produces
-
-```
-lagos_20260728_144225.parquet
-```
-
-↓
-
-## Feature Engineering
-
-Produces
-
-```
-lagos_20260728_144225_features.parquet
-```
-
-↓
-
-## Risk Calculation
-
-Produces
-
-```
-lagos_20260728_144225_risk.parquet
-```
-
-↓
-
-## Upload to GCS
-
-Uploads only
-
-```
-Newest Risk Dataset
-```
-
-↓
-
-## BigQuery
-
-Loads only
-
-```
-Newest GCS Object
-```
-
-↓
-
-## Deduplication
-
-Removes duplicate records using
-
-```
-location
-date
-extracted_at
-```
-
-This approach improves:
-
-- Performance
-- Scalability
-- Storage efficiency
-- Pipeline execution time
-
----
-
-# 📍 Multi-Location Support
-
-The pipeline is configurable for different Nigerian locations without changing the application code.
-
-Example
-
-```
-config/
-└── locations.json
-```
-
-```json
-{
-    "lagos": {
-        "latitude": 6.4531,
-        "longitude": 3.3958
-    },
-    "abuja": {
-        "latitude": 9.0765,
-        "longitude": 7.3986
-    },
-    "enugu": {
-        "latitude": 6.4402,
-        "longitude": 7.4943
-    },
-    "port_harcourt": {
-        "latitude": 4.8156,
-        "longitude": 7.0498
-    },
-    "kano": {
-        "latitude": 12.0022,
-        "longitude": 8.5920
-    }
-}
-```
-
-Simply change
-
-```env
-LOCATION=lagos
-```
-
-to
-
-```env
-LOCATION=enugu
-```
-
-or
-
-```env
-LOCATION=abuja
-```
-
-The pipeline automatically extracts weather data for the selected location.
 
 ---
 
@@ -706,32 +428,6 @@ The platform converts rainfall observations into actionable environmental indica
 | ≥75 mm | HIGH |
 | 40–74 mm | MEDIUM |
 | <40 mm | LOW |
-
----
-
-# ✅ Data Validation Rules
-
-Every dataset passes automated validation before processing.
-
-The validation layer checks for:
-
-- Required fields
-- Missing values
-- Invalid JSON structure
-- Empty datasets
-- Temperature availability
-- Rainfall availability
-- Daily forecast availability
-- Duplicate detection
-- Metadata validation
-
-If validation fails:
-
-- The Airflow task stops.
-- No downstream tasks are executed.
-- Detailed error logs are generated.
-
-This prevents invalid data from entering the analytics pipeline.
 
 ---
 
@@ -1316,7 +1012,7 @@ Feel free to use, modify, and distribute this project with attribution.
 
 ## Daniel Okom
 
-**Data Engineer | Cloud Data Engineer | Python Developer**
+**Data Engineer | Cloud Data Engineer | Data Analyst**
 
 📧 Email
 
@@ -1338,18 +1034,4 @@ https://www.linkedin.com/in/daniel-okom-748798242
 
 ---
 
-# ⭐ Support the Project
-
-If you found this project useful:
-
-⭐ Star the repository
-
-🍴 Fork the project
-
-📢 Share it with others
-
-💬 Open an issue for suggestions or improvements
-
----
-
-> **Built with ❤️ using Python, Apache Airflow, Docker, Google Cloud Platform, BigQuery, and Looker Studio to demonstrate modern Data Engineering practices for climate intelligence and flood early warning.**
+> **Demonstration of modern Data Engineering practices for climate intelligence and flood early warning.**
