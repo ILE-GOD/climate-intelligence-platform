@@ -1,6 +1,8 @@
 import logging
-import pandas as pd
 import os
+from pathlib import Path
+
+import pandas as pd
 
 DATA_PROCESSED_DIR = os.environ.get("DATA_PROCESSED_DIR", "/opt/airflow/data/processed")
 
@@ -51,17 +53,39 @@ def feature_engineering():
         "Starting feature engineering..."
     )
 
-    input_file = (
-        "data/processed/weather.parquet"
+    processed_directory = Path(DATA_PROCESSED_DIR)
+
+    parquet_files = [
+        file for file in processed_directory.glob("*.parquet")
+        if not file.name.endswith("_features.parquet")
+        and not file.name.endswith("_risk.parquet")
+    ]
+
+    if not parquet_files:
+        raise FileNotFoundError(
+            "No processed parquet files found."
+        )
+
+    input_file = max(
+        parquet_files,
+        key=lambda file: file.stat().st_mtime
     )
 
     output_file = (
-        "data/processed/weather_features.parquet"
+        processed_directory
+        / input_file.name.replace(
+            ".parquet",
+            "_features.parquet"
+        )
     )
 
     # Load data
     df = pd.read_parquet(
         input_file
+    )
+    
+    logging.info(
+        f"Processing: {input_file.name}"
     )
 
     # Add features
@@ -73,6 +97,10 @@ def feature_engineering():
     df.to_parquet(
         output_file,
         index=False
+    )
+    
+    logging.info(
+        f"Rows processed: {len(df)}"
     )
 
     logging.info(

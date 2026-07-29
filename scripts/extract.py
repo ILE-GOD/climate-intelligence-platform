@@ -8,13 +8,14 @@ import os
 DATA_RAW_DIR = os.environ.get("DATA_RAW_DIR", "/opt/airflow/data/raw")
 
 # --------------------------------------------------
-# 1. BASIC CONFIGURATION
+# LOCATION CONFIGURATION
+# Reads values from .env
 # --------------------------------------------------
 
-LATITUDE = 6.4531
-LONGITUDE = 3.3958
+LATITUDE = float(os.getenv("LATITUDE", "6.4531"))
+LONGITUDE = float(os.getenv("LONGITUDE", "3.3958"))
 
-LOCATION_NAME = "lagos"
+LOCATION_NAME = os.getenv("LOCATION_NAME", "lagos")
 
 
 # --------------------------------------------------
@@ -64,7 +65,7 @@ def save_raw(data, location_name):
     Save raw API response as a timestamped JSON file.
     """
 
-    raw_directory = Path("data/raw")
+    raw_directory = Path(DATA_RAW_DIR)
 
     raw_directory.mkdir(
         parents=True,
@@ -79,8 +80,15 @@ def save_raw(data, location_name):
 
     file_path = raw_directory / filename
 
-    with open(file_path, "w") as file:
+    # Add metadata directly into the API response
+    data["metadata"] = {
+        "location": location_name,
+        "latitude": LATITUDE,
+        "longitude": LONGITUDE,
+        "extracted_at": datetime.utcnow().isoformat()
+    }
 
+    with open(file_path, "w") as file:
         json.dump(
             data,
             file,
@@ -88,7 +96,6 @@ def save_raw(data, location_name):
         )
 
     return file_path
-
 
 # --------------------------------------------------
 # 5. PIPELINE FUNCTION

@@ -1,6 +1,8 @@
 import logging
-import pandas as pd
 import os
+from pathlib import Path
+
+import pandas as pd
 
 
 DATA_PROCESSED_DIR = os.environ.get("DATA_PROCESSED_DIR", "/opt/airflow/data/processed")
@@ -136,19 +138,37 @@ def calculate_risk():
         "Starting risk calculations..."
     )
 
-    input_file = (
-        "data/processed/"
-        "weather_features.parquet"
+    processed_directory = Path(DATA_PROCESSED_DIR)
+
+    feature_files = list(
+        processed_directory.glob("*_features.parquet")
+    )
+
+    if not feature_files:
+        raise FileNotFoundError(
+            "No feature-engineered parquet files found."
+        )
+
+    input_file = max(
+        feature_files,
+        key=lambda file: file.stat().st_mtime
     )
 
     output_file = (
-        "data/processed/"
-        "weather_risk.parquet"
+        processed_directory
+        / input_file.name.replace(
+            "_features.parquet",
+            "_risk.parquet"
+        )
     )
 
     # Load features
     df = pd.read_parquet(
         input_file
+    )
+    
+    logging.info(
+        f"Processing: {input_file.name}"
     )
 
     # Calculate risk indicators
@@ -160,6 +180,10 @@ def calculate_risk():
     df.to_parquet(
         output_file,
         index=False
+    )
+    
+    logging.info(
+        f"Rows processed: {len(df)}"
     )
 
     logging.info(

@@ -1,18 +1,17 @@
 import logging
 import os
 from pathlib import Path
-from datetime import date
 
 from dotenv import load_dotenv
 from google.cloud import storage
-import os
 
-DATA_PROCESSED_DIR = os.environ.get("DATA_PROCESSED_DIR", "/opt/airflow/data/processed")
+DATA_PROCESSED_DIR = os.environ.get(
+    "DATA_PROCESSED_DIR",
+    "/opt/airflow/data/processed"
+)
 
-# Load environment variables
 load_dotenv()
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -20,40 +19,65 @@ logging.basicConfig(
 
 
 def upload_to_gcs():
-    # Get configuration from .env
+
     bucket_name = os.getenv("GCS_BUCKET_NAME")
 
     if not bucket_name:
-        raise ValueError("GCS_BUCKET_NAME is not set in the .env file.")
+        raise ValueError(
+            "GCS_BUCKET_NAME is not set."
+        )
 
-    # Local Silver-layer file
-    local_file = Path("data/processed/weather_risk.parquet")
+    processed_directory = Path(DATA_PROCESSED_DIR)
 
-    if not local_file.exists():
-        raise FileNotFoundError(f"File not found: {local_file}")
+    parquet_files = list(
+        processed_directory.glob("*_risk.parquet")
+    )
 
-    # Date-based folder
-    today = date.today().isoformat()
+    if not parquet_files:
+        raise FileNotFoundError(
+            f"No *_risk.parquet files found in {processed_directory}"
+        )
 
-    # Destination inside GCS
-    destination_blob = f"silver/{today}/weather_risk.parquet"
+    local_file = max(
+        parquet_files,
+        key=lambda f: f.stat().st_mtime
+    )
 
-    logging.info(f"Uploading {local_file}...")
+    logging.info(
+        f"Uploading newest file: {local_file.name}"
+    )
 
-    # Create GCS client
+    parts = local_file.stem.split("_")
+
+    run_date = next(
+        part
+        for part in parts
+        if part.isdigit() and len(part) == 8
+    )
+
+    folder = (
+        f"{run_date[:4]}-"
+        f"{run_date[4:6]}-"
+        f"{run_date[6:8]}"
+    )
+
+    destination_blob = (
+        f"silver/{folder}/{local_file.name}"
+    )
+
     storage_client = storage.Client()
-
-    # Get bucket
+    
     bucket = storage_client.bucket(bucket_name)
 
-    # Create blob
     blob = bucket.blob(destination_blob)
 
-    # Upload file
     blob.upload_from_filename(str(local_file))
 
     logging.info("File uploaded successfully!")
-    logging.info(f"Location: gs://{bucket_name}/{destination_blob}")
+
+    logging.info(
+        f"Location: gs://{bucket_name}/{destination_blob}"
+    )
 
 
 if __name__ == "__main__":

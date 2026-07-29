@@ -86,6 +86,12 @@ services:
 
       GCS_LOCATION: ${GCS_LOCATION}
 
+      LATITUDE: ${LATITUDE}
+      
+      LONGITUDE: ${LONGITUDE}
+      
+      LOCATION_NAME: ${LOCATION_NAME}
+
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/config/gcp-service-account.json
 
     volumes:
@@ -144,6 +150,12 @@ services:
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
 
       GCS_LOCATION: ${GCS_LOCATION}
+
+      LATITUDE: ${LATITUDE}
+      
+      LONGITUDE: ${LONGITUDE}
+      
+      LOCATION_NAME: ${LOCATION_NAME}
 
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/config/gcp-service-account.json
 
@@ -219,6 +231,12 @@ services:
 
       GCS_LOCATION: ${GCS_LOCATION}
 
+      LATITUDE: ${LATITUDE}
+      
+      LONGITUDE: ${LONGITUDE}
+      
+      LOCATION_NAME: ${LOCATION_NAME}
+
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/config/gcp-service-account.json
 
     volumes:
@@ -279,6 +297,12 @@ services:
       BIGQUERY_PROJECT: ${BIGQUERY_PROJECT}
 
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+
+      LATITUDE: ${LATITUDE}
+      
+      LONGITUDE: ${LONGITUDE}
+      
+      LOCATION_NAME: ${LOCATION_NAME}
 
       GCS_LOCATION: ${GCS_LOCATION}
 
@@ -343,6 +367,12 @@ services:
 
       GCS_LOCATION: ${GCS_LOCATION}
 
+      LATITUDE: ${LATITUDE}
+      
+      LONGITUDE: ${LONGITUDE}
+      
+      LOCATION_NAME: ${LOCATION_NAME}
+
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/config/gcp-service-account.json
 
     volumes:
@@ -387,6 +417,10 @@ services:
       GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
 
       GCS_LOCATION: ${GCS_LOCATION}
+
+      LATITUDE: ${LATITUDE}
+      LONGITUDE: ${LONGITUDE}
+      LOCATION_NAME: ${LOCATION_NAME}
 
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/config/gcp-service-account.json
 

@@ -17,7 +17,7 @@ logging.basicConfig(
 
 def load_latest_json():
 
-    raw_directory = Path("data/raw")
+    raw_directory = Path(DATA_RAW_DIR)
 
     json_files = list(
         raw_directory.glob("*.json")
@@ -38,11 +38,19 @@ def load_latest_json():
         f"Loading file: {latest_file}"
     )
 
-    with open(latest_file, "r") as file:
+    logging.info(
+    f"Loading file: {latest_file}"
+)
+
+    logging.info(
+        f"Processing newest file: {latest_file.name}"
+    )
+
+    with open(latest_file, "r", encoding="utf-8") as file:
 
         data = json.load(file)
 
-    return data
+    return data, latest_file
 
 
 def transform_weather_data(data):
@@ -73,15 +81,28 @@ def transform_weather_data(data):
     )
 
     # Add location
-    df["location"] = "Lagos"
+    metadata = data.get("metadata", {})
+
+    df["location"] = metadata.get("location", "unknown")
+
+    df["latitude"] = metadata.get("latitude")
+
+    df["longitude"] = metadata.get("longitude")
+
+    df["extracted_at"] = (
+        pd.to_datetime(metadata.get("extracted_at"), utc=True)
+        .round("us")
+    )
+    
+    df["extracted_at"] = df["extracted_at"].dt.tz_localize(None)
 
     return df
 
 
-def save_processed_data(df):
+def save_processed_data(df, latest_file):
 
     processed_directory = Path(
-        "data/processed"
+        DATA_PROCESSED_DIR
     )
 
     processed_directory.mkdir(
@@ -90,17 +111,29 @@ def save_processed_data(df):
     )
 
     output_file = (
-        processed_directory
-        / "weather.parquet"
+    processed_directory
+    / latest_file.with_suffix(".parquet").name
     )
-
+    
     df["date"] = pd.to_datetime(
         df["date"]
     ).dt.date
 
+    df = df.sort_values("date")
+
+    logging.info(df.dtypes)
+    logging.info(df["extracted_at"].head())
+    
     df.to_parquet(
         output_file,
-        index=False
+        index=False,
+        engine="pyarrow",
+        coerce_timestamps="us",
+        allow_truncated_timestamps=True
+    )
+
+    logging.info(
+        f"Rows processed: {len(df)}"
     )
 
     logging.info(
@@ -114,15 +147,11 @@ def transform():
         "Starting data transformation..."
     )
 
-    data = load_latest_json()
+    data, latest_file = load_latest_json()
 
-    df = transform_weather_data(
-        data
-    )
+    df = transform_weather_data(data)
 
-    save_processed_data(
-        df
-    )
+    save_processed_data(df, latest_file)
 
     logging.info(
         "Data transformation completed successfully."
