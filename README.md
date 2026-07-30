@@ -120,166 +120,13 @@ Unlike simple weather dashboards, this platform focuses on **decision support** 
 
 # 🏗 Solution Architecture
 
-```text
-                    Weather API
-                 (Open-Meteo API)
-                         │
-                         ▼
-               Data Extraction Layer
-                Python + Requests
-                         │
-                         ▼
-             Apache Airflow Orchestration
-                         │
-                         ▼
-                Data Validation Layer
-      ┌──────────────────────────────────┐
-      │ • Schema Validation              │
-      │ • Missing Values                 │
-      │ • Duplicate Checks               │
-      │ • Data Quality Rules             │
-      └──────────────────────────────────┘
-                         │
-                         ▼
-               Transformation Layer
-      ┌──────────────────────────────────┐
-      │ • Data Cleaning                  │
-      │ • Feature Engineering            │
-      │ • Risk Calculations              │
-      └──────────────────────────────────┘
-                         │
-                         ▼
-             Bronze → Silver → Gold
-                         │
-                         ▼
-             Google Cloud Storage (GCS)
-                         │
-                         ▼
-                Google BigQuery
-                         │
-                         ▼
-               Looker Studio Dashboard
-                         │
-                         ▼
-             Climate Decision Support
-```
-
----
-
-# 🏛 Medallion Architecture
-
-```text
-                     Open-Meteo API
-                            │
-                            ▼
-                    Bronze Layer
-             Timestamped JSON Files
-      lagos_20260728_144225.json
-
-                            │
-                            ▼
-                    Silver Layer
-      Timestamped Parquet Datasets
-
-      lagos_20260728_144225.parquet
-      lagos_20260728_144225_features.parquet
-      lagos_20260728_144225_risk.parquet
-
-                            │
-                            ▼
-               Google Cloud Storage
-
-gs://climate-intel-raw-data-2026/
-└── silver/
-    └── 2026-07-28/
-        └── lagos_20260728_144225_risk.parquet
-
-                            │
-                            ▼
-                    Gold Layer
-
-BigQuery
-└── climate_gold
-      └── weather_risk
-
-                            │
-                            ▼
-                 Looker Studio Dashboards
-```
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/2531f028-634f-4d3d-a12c-57468d21fadb" />
 
 ---
 
 # 🔄 End-to-End Pipeline Workflow
 
-```text
-Extract Weather Data
-        │
-        ▼
-Validate Raw JSON
-        │
-        ▼
-Transform Dataset
-        │
-        ▼
-Feature Engineering
-        │
-        ▼
-Risk Calculations
-        │
-        ▼
-Upload Latest Dataset to GCS
-        │
-        ▼
-Load Latest Dataset into BigQuery
-        │
-        ▼
-Remove Duplicate Records
-        │
-        ▼
-Build Dashboards
-```
-
----
-
-# 📂 Project Structure
-
-```text
-climate-intelligence-platform/
-
-│
-├── dags/
-│     └── climate_pipeline_dag.py
-│
-├── scripts/
-│     ├── extract.py
-│     ├── validate.py
-│     ├── transform.py
-│     ├── feature_engineering.py
-│     ├── calculate_risk.py
-│     ├── load_to_gcs.py
-│     ├── load_to_bigquery.py
-│     └── run_pipeline.py
-│
-├── config/
-│     ├── locations.json
-│     └── gcp-service-account.json
-│
-├── data/
-│     ├── raw/
-│     └── processed/
-│
-├── logs/
-│
-├── plugins/
-│
-├── sql/
-│
-├── .env
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
+<img width="948" height="1659" alt="Image" src="https://github.com/user-attachments/assets/5e42ddf4-8761-4f4d-8e4f-ac29b804e4c6" />
 
 ---
 
@@ -808,86 +655,51 @@ weather_risk
 
 ## Apache Airflow
 
-> Add screenshot
+> Added screenshot
 
-```
-images/airflow_dag.png
-```
+<img width="1911" height="875" alt="Image" src="https://github.com/user-attachments/assets/83a1531b-1482-45f2-8681-d9b10905d14f" />
 
-Suggested screenshot:
-
-- DAG Graph
-- Successful Run
-- Task Status
-
----
-
-## Airflow Task Graph
-
-> Add screenshot
-
-```
-images/airflow_graph.png
-```
+- Successful DAG Graph Run and Task Status
 
 ---
 
 ## Google Cloud Storage
 
-> Add screenshot
+> Added screenshot
 
-```
-images/gcs_bucket.png
-```
+<img width="1917" height="852" alt="Image" src="https://github.com/user-attachments/assets/5790fda1-ec32-4b9c-8d3a-4cba9af14ed5" />
 
-Show
-
-- Bucket
-- Uploaded Parquet Files
-
----
-
-## BigQuery Dataset
-
-> Add screenshot
-
-```
-images/bigquery_tables.png
-```
-
-Include
-
-- Dataset
-- Table
-- Row Count
+- Bucket Showing successful Uploaded Parquet Files
 
 ---
 
 ## BigQuery Query Results
 
-> Add screenshot
+> Added screenshot
 
-```
-images/bigquery_results.png
-```
+<img width="1920" height="872" alt="Image" src="https://github.com/user-attachments/assets/87583cdc-f1fe-48c8-a2e1-78a5f7b2fae3" />
+
+- Climate Gold Table in Bigquery
 
 ---
 
 ## Looker Studio Dashboard
 
-> Add screenshot
+> Added screenshot
 
-```
-images/dashboard.png
-```
+<img width="1178" height="692" alt="Image" src="https://github.com/user-attachments/assets/bf69c2f1-192f-41fd-830e-e2dae324fa18" />
 
-Recommended visuals
+Visuals showing: 
 
 - Flood Risk by Date
 - Rainfall Trend
 - Temperature Trend
 - Crop Stress
 - Pond Overflow Risk
+
+## 📊 Dashboard
+
+[View the Live Climate Intelligence Dashboard](https://datastudio.google.com/reporting/f04d0d6e-329c-47d2-8ac8-60de333a968c)
 
 ---
 
@@ -1020,17 +832,9 @@ Feel free to use, modify, and distribute this project with attribution.
 okomilechukwudaniel@gmail.com
 ```
 
-🔗 GitHub
+🔗 GitHub: https://github.com/ILE-GOD
 
-```
-https://github.com/ILE-GOD
-```
-
-🔗 LinkedIn
-
-```
-https://www.linkedin.com/in/daniel-okom-748798242
-```
+🔗 LinkedIn: https://www.linkedin.com/in/daniel-okom-748798242
 
 ---
 
