@@ -19,19 +19,19 @@ Climate-related disasters such as flooding, prolonged rainfall, and heat stress 
 
 The **Climate Intelligence & Flood Early Warning Platform** is a production-inspired Data Engineering project that automates the complete weather analytics lifecycle from data extraction to decision-ready dashboards.
 
-The platform:
+The project aims to:
 
-- Automatically extracts weather data from public APIs
-- Validates incoming data before processing
-- Applies data cleaning and feature engineering
-- Calculates climate and flood risk indicators
-- Stores data using a Medallion Architecture
-- Loads analytical datasets into Google BigQuery
-- Supports interactive dashboards in Looker Studio
-- Uses Apache Airflow for orchestration
-- Runs entirely inside Docker containers
+- Build an end-to-end cloud-based ETL pipeline
+- Implement a Medallion Architecture (Bronze, Silver, Gold)
+- Automate weather data ingestion from the Open-Meteo API
+- Validate and transform raw weather datasets
+- Engineer climate and rainfall features
+- Calculate flood and agricultural risk indicators
+- Store analytics-ready datasets in BigQuery
+- Build interactive dashboards in Looker Studio
+- Demonstrate production-ready Data Engineering best practices
 
-The project demonstrates modern cloud-based Data Engineering practices while producing practical insights that can support flood monitoring, agricultural planning, aquaculture management, and disaster preparedness.
+Instead of only reporting weather conditions, this platform provides actionable recommendations that support informed decision-making.
 
 ---
 
@@ -39,25 +39,9 @@ The project demonstrates modern cloud-based Data Engineering practices while pro
 
 Flooding and changing weather patterns are becoming more frequent across many regions, particularly in developing countries.
 
-These events affect multiple sectors, including:
+These events affect multiple sectors, such as; Agriculture, Aquaculture, Food Production, Urban Planning, Disaster Management and Public Health.
 
-- 🌱 Agriculture
-- 🐟 Aquaculture
-- 🚜 Food Production
-- 🏙 Urban Planning
-- 🚧 Infrastructure
-- 🚑 Disaster Management
-- ❤️ Public Health
-
-Common challenges include:
-
-- Crop losses
-- Fish pond overflow
-- Soil erosion
-- Heat stress
-- Waterlogging
-- Transportation disruption
-- Economic losses
+Common challenges include: Crop losses, Fish pond overflow, Soil erosion, Heat stress, Waterlogging, Transportation disruption, Economic losses etc.
 
 Although weather data is publicly available, organizations often struggle to:
 
@@ -67,47 +51,11 @@ Although weather data is publicly available, organizations often struggle to:
 - Generate meaningful risk indicators
 - Deliver timely insights for decision-making
 
-This project addresses these challenges by transforming raw weather observations into analytics-ready datasets and actionable climate intelligence.
-
----
-
-# 🎯 Project Objectives
-
-The objectives of this project are to:
-
-- Build a complete end-to-end ETL/ELT pipeline
-- Demonstrate production-inspired Data Engineering practices
-- Implement a Medallion Data Architecture
-- Automate weather data ingestion using Apache Airflow
-- Perform automated data validation
-- Engineer weather-based analytical features
-- Calculate flood and climate risk indicators
-- Publish analytical datasets to Google BigQuery
-- Enable dashboard reporting using Looker Studio
-- Demonstrate incremental data processing
-- Showcase Docker-based deployment
-- Follow cloud engineering best practices
-
 ---
 
 # 💡 Solution Overview
 
-The platform converts raw weather observations into meaningful business intelligence through a fully automated pipeline.
-
-The pipeline performs the following tasks:
-
-1. Extract weather forecasts from the Open-Meteo API.
-2. Store timestamped raw JSON files in the Bronze layer.
-3. Validate incoming datasets.
-4. Transform raw data into clean Parquet files.
-5. Engineer rainfall and temperature features.
-6. Calculate environmental risk indicators.
-7. Upload processed datasets to Google Cloud Storage.
-8. Load analytics-ready data into Google BigQuery.
-9. Remove duplicate records automatically.
-10. Build dashboards in Looker Studio.
-
-Unlike simple weather dashboards, this platform focuses on **decision support** by generating indicators such as:
+This project addresses these challenges by transforming raw weather observations into analytics-ready datasets and actionable climate intelligence. Unlike simple weather dashboards, this platform focuses on **decision support** by generating indicators such as:
 
 - Flash Flood Risk
 - Sustained Flood Risk
@@ -171,21 +119,12 @@ Unlike simple weather dashboards, this platform focuses on **decision support** 
 The platform currently consumes weather data from publicly available APIs and is designed to support multiple weather providers such as; Open-Meteo API, NASA POWER API, OpenWeather API, NiMet API | Nigerian Weather, NIHSA Flood Data.
 Open-Meteo API used provides data such: Current Weather, Daily Forecast, Rainfall, Temperature, Humidity, Wind, Forecast Models
 
-### API Documentation
-
-Open-Meteo
-
-https://open-meteo.com/
-
-API Documentation
-
-https://open-meteo.com/en/docs
-
-Example Request
-
-```text
-https://api.open-meteo.com/v1/forecast
-```
+| Source | Purpose | Documentation |
+|---------|----------|---------------|
+| Open-Meteo API | Weather forecasts | https://open-meteo.com/en/docs |
+| NASA POWER *(Future)* | Climate data | https://power.larc.nasa.gov |
+| OpenWeather *(Future)* | Weather observations | https://openweathermap.org/api |
+| NiMet *(Future)* | Nigerian weather | https://nimet.gov.ng |
 
 ---
 
@@ -226,428 +165,75 @@ The final analytical dataset contains the following fields.
 
 # 🌧️ Risk Assessment Logic
 
-The platform converts rainfall observations into actionable environmental indicators.
+Convertion of observations into actionable environmental indicators.
 
-## Flash Flood Risk
-
-| Rainfall (3-Day) | Risk |
-|------------------|------|
-| ≥ 75 mm | CRITICAL |
-| 40–74 mm | WARNING |
-| < 40 mm | NORMAL |
-
----
-
-## Sustained Flood Risk
-
-| Rainfall (7-Day) | Risk |
-|------------------|------|
-| ≥ 100 mm | CRITICAL |
-| 60–99 mm | WARNING |
-| < 60 mm | NORMAL |
-
----
-
-## Soil Saturation Risk
-
-| Rainfall (7-Day) | Risk |
-|------------------|------|
-| ≥100 mm | HIGH |
-| 60–99 mm | MEDIUM |
-| <60 mm | LOW |
-
----
-
-## Crop Heat Stress
-
-| Maximum Temperature | Risk |
-|----------------------|------|
-| ≥35°C | HIGH |
-| 30–34°C | MEDIUM |
-| <30°C | LOW |
-
----
-
-## Pond Overflow Risk
-
-| Rainfall (3-Day) | Risk |
-|------------------|------|
-| ≥75 mm | HIGH |
-| 40–74 mm | MEDIUM |
-| <40 mm | LOW |
+| Indicator | Threshold | Risk Level |
+|-----------|-----------|------------|
+| Flash Flood Risk | <40 mm | NORMAL |
+| | 40–74 mm | WARNING |
+| | ≥75 mm | CRITICAL |
+| Sustained Flood Risk | <60 mm | NORMAL |
+| | 60–99 mm | WARNING |
+| | ≥100 mm | CRITICAL |
+| Soil Saturation | <60 mm | LOW |
+| | 60–99 mm | MEDIUM |
+| | ≥100 mm | HIGH |
+| Crop Heat Stress | <30°C | LOW |
+| | 30–34°C | MEDIUM |
+| | ≥35°C | HIGH |
+| Pond Overflow | <40 mm | LOW |
+| | 40–74 mm | MEDIUM |
+| | ≥75 mm | HIGH |
 
 ---
 
 # 💻 Installation Guide
 
-## Prerequisites
+### Prerequisites
 
-Install the following software before running the project.
+- Python 3.11+
+- Docker Desktop
+- Git
+- Google Cloud SDK
 
-| Software | Version |
-|----------|----------|
-| Python | 3.11+ |
-| Docker Desktop | Latest |
-| Docker Compose | Latest |
-| Git | Latest |
-| Google Cloud SDK | Latest |
-| Visual Studio Code | Recommended |
-
----
-
-# 📥 Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/ILE-GOD/climate-intelligence-platform.git
-
 cd climate-intelligence-platform
 ```
 
----
+### Install Dependencies
 
-# ⚙️ Project Setup
-
-## Windows
-
-### 1. Clone Repository
-
-```powershell
-git clone https://github.com/ILE-GOD/climate-intelligence-platform.git
-
-cd climate-intelligence-platform
-```
-
-### 2. Create Virtual Environment
-
-```powershell
-python -m venv .venv
-```
-
-Activate
-
-```powershell
-.venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment
+### Configure Environment
 
-Copy
+Create a `.env` file and add your Google Cloud credentials and project configuration.
 
-```
-.env.example
-```
+### Start the Project
 
-to
-
-```
-.env
-```
-
-Update the environment variables.
-
-### 5. Start Docker
-
-```powershell
+```bash
 docker compose up -d
 ```
 
-### 6. Open Airflow
+Open Apache Airflow:
 
 ```
 http://localhost:8080
 ```
 
----
-
-## Linux
-
-```bash
-git clone https://github.com/ILE-GOD/climate-intelligence-platform.git
-
-cd climate-intelligence-platform
-
-python3 -m venv .venv
-
-source .venv/bin/activate
-
-pip install -r requirements.txt
-
-docker compose up -d
-```
-
----
-
-## macOS
-
-```bash
-git clone https://github.com/ILE-GOD/climate-intelligence-platform.git
-
-cd climate-intelligence-platform
-
-python3 -m venv .venv
-
-source .venv/bin/activate
-
-pip install -r requirements.txt
-
-docker compose up -d
-```
-
----
-
-# 🐳 Docker Services
-
-The project runs inside Docker containers.
-
-| Container | Purpose |
-|------------|----------|
-| airflow-webserver | Airflow UI |
-| airflow-scheduler | DAG Scheduler |
-| airflow-triggerer | Trigger Service |
-| airflow-init | Initialization |
-| postgres | Airflow Metadata Database |
-| pgadmin | PostgreSQL Administration |
-
-Start containers
-
-```bash
-docker compose up -d
-```
-
-Check status
-
-```bash
-docker ps
-```
-
-Stop containers
-
-```bash
-docker compose down
-```
-
----
-
-# ☁️ Google Cloud Setup
-
-## Step 1
-
-Create a Google Cloud Project.
-
-Example
-
-```
-capable-avatar-475900-j5
-```
-
----
-
-## Step 2
-
-Enable the following APIs
-
-- BigQuery API
-- Cloud Storage API
-- IAM API
-
----
-
-## Step 3
-
-Create a Storage Bucket
-
-Example
-
-```
-climate-intel-raw-data-2026
-```
-
----
-
-## Step 4
-
-Create a Service Account
-
-Grant
-
-- Storage Admin
-- BigQuery Admin
-
-Download the JSON credentials.
-
-Store it inside
-
-```
-config/
-```
-
-Example
-
-```
-config/gcp-service-account.json
-```
-
----
-
-# 🔐 Environment Variables
-
-Create a `.env` file.
-
-```env
-#############################
-# Google Cloud
-#############################
-
-BIGQUERY_PROJECT=capable-avatar-475900-j5
-
-GCS_BUCKET_NAME=climate-intel-raw-data-2026
-
-GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/config/gcp-service-account.json
-
-#############################
-# Weather Location
-#############################
-
-LOCATION=lagos
-
-LATITUDE=6.4531
-
-LONGITUDE=3.3958
-
-LOCATION_NAME=lagos
-
-#############################
-# Data Directories
-#############################
-
-DATA_RAW_DIR=/opt/airflow/data/raw
-
-DATA_PROCESSED_DIR=/opt/airflow/data/processed
-```
-
----
-
-# ▶️ Running the Pipeline
-
-Start Docker
-
-```bash
-docker compose up -d
-```
-
-Open Airflow
-
-```
-http://localhost:8080
-```
-
-Default credentials
-
-```
-Username: airflow
-
-Password: airflow
-```
-
-Enable
-
-```
-climate_intelligence_pipeline
-```
-
-Click
-
-```
-Trigger DAG
-```
-
-The pipeline executes the following tasks.
-
-```text
-Extract
-      │
-      ▼
-Validate
-      │
-      ▼
-Transform
-      │
-      ▼
-Feature Engineering
-      │
-      ▼
-Risk Calculation
-      │
-      ▼
-Upload to GCS
-      │
-      ▼
-Load to BigQuery
-```
-
----
-
-# 📂 Pipeline Outputs
-
-## Bronze
-
-```
-data/raw/
-
-lagos_20260728_144225.json
-```
-
----
-
-## Silver
-
-```
-data/processed/
-
-lagos_20260728_144225.parquet
-
-lagos_20260728_144225_features.parquet
-
-lagos_20260728_144225_risk.parquet
-```
-
----
-
-## Google Cloud Storage
-
-```
-gs://climate-intel-raw-data-2026/
-
-silver/
-
-2026-07-28/
-
-lagos_20260728_144225_risk.parquet
-```
-
----
-
-## BigQuery
-
-```
-Project
-
-capable-avatar-475900-j5
-
-Dataset
-
-climate_gold
-
-Table
-
-weather_risk
-```
+Trigger the **climate_intelligence_pipeline** DAG.
+
+### Pipeline Output
+
+- Raw JSON → `data/raw/`
+- Processed Parquet → `data/processed/`
+- Cloud Storage → Google Cloud Storage
+- Data Warehouse → BigQuery (`climate_gold`)
+- Dashboards → Looker Studio
 
 ---
 
@@ -731,84 +317,34 @@ Visuals showing:
 
 # 🚀 Future Enhancements
 
-The platform is designed to evolve into a complete Climate Intelligence ecosystem.
-
 Planned improvements include:
-
-- Multiple weather APIs
-- Real-time weather streaming
 - Apache Kafka
 - dbt transformations
 - Great Expectations validation
-- Cloud Composer deployment
 - Terraform Infrastructure as Code
 - Kubernetes deployment
 - Machine Learning flood prediction
 - Rainfall anomaly detection
 - WhatsApp flood alerts
-- SMS notifications
 - Email alert service
 - Interactive GIS maps
-- Historical climate analytics
-- Weather anomaly detection
-- Automated data quality monitoring
 
 ---
 
 # 💼 Skills Demonstrated
 
-This project demonstrates practical experience with:
-
-- Data Engineering
-- ETL Pipeline Development
-- ELT Architecture
+- Python
 - Apache Airflow
 - Docker
 - Google Cloud Platform
-- Google Cloud Storage
 - BigQuery
+- Google Cloud Storage
 - Pandas
-- REST APIs
-- Data Validation
-- Incremental Processing
-- Feature Engineering
-- Risk Modeling
+- ETL/ELT Pipelines
 - Medallion Architecture
 - Data Warehousing
-- Business Intelligence
 - Looker Studio
-- Git
-- GitHub
-- Cloud Automation
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-To contribute:
-
-1. Fork the repository.
-2. Create a new feature branch.
-
-```bash
-git checkout -b feature/my-feature
-```
-
-3. Commit your changes.
-
-```bash
-git commit -m "Add new feature"
-```
-
-4. Push your branch.
-
-```bash
-git push origin feature/my-feature
-```
-
-5. Open a Pull Request.
+- Git & GitHub
 
 ---
 
