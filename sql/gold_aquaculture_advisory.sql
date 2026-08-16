@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE
+CREATE OR REPLACE VIEW
 `capable-avatar-475900-j5.climate_gold.gold_aquaculture_advisory`
 AS
 
@@ -11,7 +11,6 @@ SELECT
     pond_overflow_risk,
 
     CASE
-
         WHEN pond_overflow_risk = 'HIGH'
             THEN 'Inspect pond embankments and prepare overflow controls'
 
@@ -20,7 +19,6 @@ SELECT
 
         ELSE
             'Normal pond conditions'
-
     END AS aquaculture_advisory
 
 FROM

@@ -140,61 +140,63 @@ def calculate_risk():
 
     processed_directory = Path(DATA_PROCESSED_DIR)
 
-    feature_files = list(
-        processed_directory.glob("*_features.parquet")
+    feature_files = sorted(
+        processed_directory.glob(
+            "*_features.parquet"
+        )
     )
 
     if not feature_files:
+
         raise FileNotFoundError(
             "No feature-engineered parquet files found."
         )
 
-    input_file = max(
-        feature_files,
-        key=lambda file: file.stat().st_mtime
-    )
+    processed_count = 0
 
-    output_file = (
-        processed_directory
-        / input_file.name.replace(
-            "_features.parquet",
-            "_risk.parquet"
+    for input_file in feature_files:
+
+        logging.info(
+            f"Processing: {input_file.name}"
         )
-    )
 
-    # Load features
-    df = pd.read_parquet(
-        input_file
-    )
-    
+        output_file = (
+            processed_directory
+            / input_file.name.replace(
+                "_features.parquet",
+                "_risk.parquet"
+            )
+        )
+
+        # Load features
+        df = pd.read_parquet(
+            input_file
+        )
+
+        # Calculate risks
+        df = calculate_risks(
+            df
+        )
+
+        # Save output
+        df.to_parquet(
+            output_file,
+            index=False
+        )
+
+        logging.info(
+            f"Rows processed: {len(df)}"
+        )
+
+        logging.info(
+            f"Saved: {output_file.name}"
+        )
+
+        processed_count += 1
+
     logging.info(
-        f"Processing: {input_file.name}"
+        f"Risk calculations completed for {processed_count} files."
     )
-
-    # Calculate risk indicators
-    df = calculate_risks(
-        df
-    )
-
-    # Save final dataset
-    df.to_parquet(
-        output_file,
-        index=False
-    )
-    
-    logging.info(
-        f"Rows processed: {len(df)}"
-    )
-
-    logging.info(
-        f"Risk data saved to: {output_file}"
-    )
-
-    logging.info(
-        "Risk calculations completed successfully."
-    )
-
-    return df
 
 
 if __name__ == "__main__":

@@ -137,64 +137,64 @@ def validate_file(file_path):
 
 def validate():
 
-    raw_directory = Path("data/raw")
+    raw_directory = Path(DATA_RAW_DIR)
 
     # Get all JSON files
-    json_files = list(
+    json_files = sorted(
         raw_directory.glob("*.json")
     )
 
     if not json_files:
 
         error_message = (
-            "No JSON files found in data/raw."
+            "No JSON files found."
         )
 
-        logging.error(
-            error_message
-        )
+        logging.error(error_message)
 
         raise FileNotFoundError(
             error_message
         )
 
-    # Validate the latest file
-    latest_file = max(
-        json_files,
-        key=lambda file: file.stat().st_mtime
-    )
+    reports = []
 
-    logging.info(
-        f"Validating: {latest_file}"
-    )
-
-    report = validate_file(
-        latest_file
-    )
-
-    if report["valid"]:
+    for json_file in json_files:
 
         logging.info(
-            "Validation successful!"
-        )
-        
-        return report
-
-    else:
-
-        logging.error(
-            "Validation failed!"
+            f"Validating: {json_file.name}"
         )
 
-        for error in report["errors"]:
+        report = validate_file(json_file)
 
-            logging.error(
-                f"- {error}"
+        reports.append(report)
+
+        if report["valid"]:
+
+            logging.info(
+                f"{json_file.name} validation successful."
             )
 
-        raise ValueError(
-            "Data validation failed."
-        )
+        else:
+
+            logging.error(
+                f"{json_file.name} validation failed."
+            )
+
+            for error in report["errors"]:
+
+                logging.error(
+                    f"- {error}"
+                )
+
+            raise ValueError(
+                f"Validation failed for {json_file.name}"
+            )
+
+    logging.info(
+        f"Successfully validated {len(reports)} files."
+    )
+
+    return reports
 
 
 if __name__ == "__main__":

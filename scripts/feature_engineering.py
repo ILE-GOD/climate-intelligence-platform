@@ -55,63 +55,63 @@ def feature_engineering():
 
     processed_directory = Path(DATA_PROCESSED_DIR)
 
-    parquet_files = [
+    parquet_files = sorted([
         file for file in processed_directory.glob("*.parquet")
         if not file.name.endswith("_features.parquet")
         and not file.name.endswith("_risk.parquet")
-    ]
+    ])
 
     if not parquet_files:
+
         raise FileNotFoundError(
             "No processed parquet files found."
         )
 
-    input_file = max(
-        parquet_files,
-        key=lambda file: file.stat().st_mtime
-    )
+    processed_count = 0
 
-    output_file = (
-        processed_directory
-        / input_file.name.replace(
-            ".parquet",
-            "_features.parquet"
+    for input_file in parquet_files:
+
+        logging.info(
+            f"Processing: {input_file.name}"
         )
-    )
 
-    # Load data
-    df = pd.read_parquet(
-        input_file
-    )
-    
+        output_file = (
+            processed_directory
+            / input_file.name.replace(
+                ".parquet",
+                "_features.parquet"
+            )
+        )
+
+        # Load data
+        df = pd.read_parquet(
+            input_file
+        )
+
+        # Add engineered features
+        df = add_features(
+            df
+        )
+
+        # Save output
+        df.to_parquet(
+            output_file,
+            index=False
+        )
+
+        logging.info(
+            f"Rows processed: {len(df)}"
+        )
+
+        logging.info(
+            f"Saved: {output_file.name}"
+        )
+
+        processed_count += 1
+
     logging.info(
-        f"Processing: {input_file.name}"
+        f"Feature engineering completed for {processed_count} files."
     )
-
-    # Add features
-    df = add_features(
-        df
-    )
-
-    # Save data
-    df.to_parquet(
-        output_file,
-        index=False
-    )
-    
-    logging.info(
-        f"Rows processed: {len(df)}"
-    )
-
-    logging.info(
-        f"Feature-engineered data saved to: {output_file}"
-    )
-
-    logging.info(
-        "Feature engineering completed successfully."
-    )
-
-    return df
 
 if __name__ == "__main__":
     feature_engineering()

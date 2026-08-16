@@ -1,6 +1,8 @@
 # 🌍 Climate Intelligence & Flood Early Warning Platform
 
-> A production-inspired Data Engineering platform that automates weather data ingestion, validation, transformation, climate risk assessment, and analytics using Apache Airflow, Docker, Google Cloud Storage, BigQuery, and Looker Studio.
+> **Real-Time Weather Monitoring & Climate Risk Analytics for Abuja and Lagos**
+
+A production-inspired Data Engineering platform that automates weather data ingestion, validation, transformation, climate risk assessment, and analytics using **Python, Apache Airflow, Docker, Google Cloud Storage, BigQuery, and Looker Studio**.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-Orchestration-red)
@@ -15,54 +17,77 @@
 
 # 📖 Executive Summary
 
-Climate-related disasters such as flooding, prolonged rainfall, and heat stress continue to threaten agriculture, aquaculture, infrastructure, food security, and public safety. Although weather information is publicly available, many organizations still lack automated systems that transform raw weather observations into actionable insights.
+The **Climate Intelligence Platform** is a cloud-based Data Engineering solution that transforms raw weather data into actionable climate intelligence.
 
-The **Climate Intelligence & Flood Early Warning Platform** is a production-inspired Data Engineering project that automates the complete weather analytics lifecycle from data extraction to decision-ready dashboards.
+Its first implementation focuses on **Abuja and Lagos**, automatically collecting and processing weather information and converting it into climate risk indicators that support:
+
+- 🌊 Flood preparedness
+- 🌱 Agriculture
+- 🐟 Aquaculture
+- 🌡️ Heat-stress monitoring
+- 🌧️ Rainfall analysis
+- 🌍 Environmental monitoring
+
+Unlike a basic weather dashboard, the platform transforms weather observations into **risk indicators and decision-support insights**.
+
+---
+
+## 🎯 Project Objectives
 
 The project aims to:
 
 - Build an end-to-end cloud-based ETL pipeline
 - Implement a Medallion Architecture (Bronze, Silver, Gold)
 - Automate weather data ingestion from the Open-Meteo API
-- Validate and transform raw weather datasets
+- Validate incoming weather datasets
+- Transform raw weather data into structured datasets
 - Engineer climate and rainfall features
-- Calculate flood and agricultural risk indicators
+- Calculate climate and flood risk indicators
 - Store analytics-ready datasets in BigQuery
 - Build interactive dashboards in Looker Studio
-- Demonstrate production-ready Data Engineering best practices
-
-Instead of only reporting weather conditions, this platform provides actionable recommendations that support informed decision-making.
+- Demonstrate production-inspired Data Engineering practices
 
 ---
 
 # 🌍 Business Problem
 
-Flooding and changing weather patterns are becoming more frequent across many regions, particularly in developing countries.
+Nigeria experiences flooding, irregular rainfall, and rising temperatures that can affect:
 
-These events affect multiple sectors, such as; Agriculture, Aquaculture, Food Production, Urban Planning, Disaster Management and Public Health.
+- 🌱 Agriculture
+- 🐟 Aquaculture
+- 🏙️ Infrastructure
+- 🍚 Food production
+- 🚨 Disaster management
+- 🌍 Environmental monitoring
 
-Common challenges include: Crop losses, Fish pond overflow, Soil erosion, Heat stress, Waterlogging, Transportation disruption, Economic losses etc.
+Although weather information is publicly available, it is often not presented in a form that directly supports decision-making.
 
-Although weather data is publicly available, organizations often struggle to:
+Organizations can struggle to:
 
-- Collect it automatically
+- Collect weather data automatically
 - Validate data quality
-- Process large volumes consistently
-- Generate meaningful risk indicators
-- Deliver timely insights for decision-making
+- Process weather data consistently
+- Convert observations into meaningful risk indicators
+- Deliver timely, understandable insights
+
+The platform addresses this gap by transforming raw weather observations into **analytics-ready datasets and actionable climate intelligence**.
 
 ---
 
 # 💡 Solution Overview
 
-This project addresses these challenges by transforming raw weather observations into analytics-ready datasets and actionable climate intelligence. Unlike simple weather dashboards, this platform focuses on **decision support** by generating indicators such as:
+The platform automatically collects weather data from the **Open-Meteo API**, processes it through an end-to-end Data Engineering pipeline, calculates climate risk indicators, and presents the results through interactive Looker Studio dashboards.
 
-- Flash Flood Risk
-- Sustained Flood Risk
-- Soil Saturation Risk
-- Crop Heat Stress
-- Pond Overflow Risk
-- Rainfall Trends
+The current implementation generates indicators including:
+
+- 🌊 Flash Flood Risk
+- 🌧️ Sustained Flood Risk
+- 💧 Soil Saturation Risk
+- 🌱 Crop Heat Stress
+- 🐟 Pond Overflow Risk
+- 📊 Rainfall Trends
+
+The platform also provides sector-specific advisory information for **agriculture and aquaculture**.
 
 ---
 
@@ -74,7 +99,7 @@ This project addresses these challenges by transforming raw weather observations
 
 # 🔄 End-to-End Pipeline Workflow
 
-<img width="948" height="1659" alt="Image" src="https://github.com/user-attachments/assets/5e42ddf4-8761-4f4d-8e4f-ac29b804e4c6" />
+<img width="815" height="186" alt="Image" src="https://github.com/user-attachments/assets/1017d58e-4bb6-4975-93d1-9eb2c7ac9ee2" />
 
 ---
 
@@ -116,8 +141,7 @@ This project addresses these challenges by transforming raw weather observations
 
 # 🌐 Data Sources
 
-The platform currently consumes weather data from publicly available APIs and is designed to support multiple weather providers such as; Open-Meteo API, NASA POWER API, OpenWeather API, NiMet API | Nigerian Weather, NIHSA Flood Data.
-Open-Meteo API used provides data such: Current Weather, Daily Forecast, Rainfall, Temperature, Humidity, Wind, Forecast Models
+The platform currently consumes weather data from publicly available  Open-Meteo APIs and is designed to support multiple weather providers as follows; 
 
 | Source | Purpose | Documentation |
 |---------|----------|---------------|
@@ -167,23 +191,7 @@ The final analytical dataset contains the following fields.
 
 Convertion of observations into actionable environmental indicators.
 
-| Indicator | Threshold | Risk Level |
-|-----------|-----------|------------|
-| Flash Flood Risk | <40 mm | NORMAL |
-| | 40–74 mm | WARNING |
-| | ≥75 mm | CRITICAL |
-| Sustained Flood Risk | <60 mm | NORMAL |
-| | 60–99 mm | WARNING |
-| | ≥100 mm | CRITICAL |
-| Soil Saturation | <60 mm | LOW |
-| | 60–99 mm | MEDIUM |
-| | ≥100 mm | HIGH |
-| Crop Heat Stress | <30°C | LOW |
-| | 30–34°C | MEDIUM |
-| | ≥35°C | HIGH |
-| Pond Overflow | <40 mm | LOW |
-| | 40–74 mm | MEDIUM |
-| | ≥75 mm | HIGH |
+<img width="817" height="355" alt="Image" src="https://github.com/user-attachments/assets/a5534e38-deec-4bc9-a5ed-60f906f64eed" />
 
 ---
 
@@ -273,7 +281,7 @@ Trigger the **climate_intelligence_pipeline** DAG.
 
 > Added screenshot
 
-<img width="1178" height="692" alt="Image" src="https://github.com/user-attachments/assets/bf69c2f1-192f-41fd-830e-e2dae324fa18" />
+<img width="1376" height="754" alt="Image" src="https://github.com/user-attachments/assets/8e021137-500b-4b41-9a38-0a5a4582301f" />
 
 Visuals showing: 
 

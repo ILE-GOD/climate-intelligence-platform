@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE
+CREATE OR REPLACE VIEW
 `capable-avatar-475900-j5.climate_gold.gold_agriculture_advisory`
 AS
 
@@ -13,7 +13,6 @@ SELECT
     crop_stress,
 
     CASE
-
         WHEN crop_stress = 'HIGH'
             THEN 'Provide shade and increase irrigation monitoring'
 
@@ -22,7 +21,6 @@ SELECT
 
         ELSE
             'Normal agricultural conditions'
-
     END AS agricultural_advisory
 
 FROM

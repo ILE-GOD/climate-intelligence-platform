@@ -29,54 +29,62 @@ def upload_to_gcs():
 
     processed_directory = Path(DATA_PROCESSED_DIR)
 
-    parquet_files = list(
+    parquet_files = sorted(
         processed_directory.glob("*_risk.parquet")
     )
 
     if not parquet_files:
+
         raise FileNotFoundError(
             f"No *_risk.parquet files found in {processed_directory}"
         )
 
-    local_file = max(
-        parquet_files,
-        key=lambda f: f.stat().st_mtime
-    )
-
-    logging.info(
-        f"Uploading newest file: {local_file.name}"
-    )
-
-    parts = local_file.stem.split("_")
-
-    run_date = next(
-        part
-        for part in parts
-        if part.isdigit() and len(part) == 8
-    )
-
-    folder = (
-        f"{run_date[:4]}-"
-        f"{run_date[4:6]}-"
-        f"{run_date[6:8]}"
-    )
-
-    destination_blob = (
-        f"silver/{folder}/{local_file.name}"
-    )
-
     storage_client = storage.Client()
-    
+
     bucket = storage_client.bucket(bucket_name)
 
-    blob = bucket.blob(destination_blob)
+    uploaded = 0
 
-    blob.upload_from_filename(str(local_file))
+    for local_file in parquet_files:
 
-    logging.info("File uploaded successfully!")
+        logging.info(
+            f"Uploading: {local_file.name}"
+        )
+
+        parts = local_file.stem.split("_")
+
+        run_date = next(
+            part
+            for part in parts
+            if part.isdigit() and len(part) == 8
+        )
+
+        folder = (
+            f"{run_date[:4]}-"
+            f"{run_date[4:6]}-"
+            f"{run_date[6:8]}"
+        )
+
+        destination_blob = (
+            f"silver/{folder}/{local_file.name}"
+        )
+
+        blob = bucket.blob(
+            destination_blob
+        )
+
+        blob.upload_from_filename(
+            str(local_file)
+        )
+
+        logging.info(
+            f"Uploaded -> gs://{bucket_name}/{destination_blob}"
+        )
+
+        uploaded += 1
 
     logging.info(
-        f"Location: gs://{bucket_name}/{destination_blob}"
+        f"Successfully uploaded {uploaded} files."
     )
 
 

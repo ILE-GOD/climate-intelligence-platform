@@ -20,38 +20,36 @@ TABLE_ID = "weather_risk"
 BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
 
 
-def get_latest_gcs_file():
-    """
-    Returns the newest risk parquet file in GCS.
-    """
+def get_all_gcs_files():
 
     storage_client = storage.Client()
 
-    bucket = storage_client.bucket(BUCKET_NAME)
+    bucket = storage_client.bucket(
+        BUCKET_NAME
+    )
 
-    blobs = list(bucket.list_blobs(prefix="silver/"))
+    blobs = list(
+        bucket.list_blobs(
+            prefix="silver/"
+        )
+    )
 
-    parquet_files = [
+    parquet_files = sorted([
         blob
         for blob in blobs
-        if blob.name.endswith("_risk.parquet")
-    ]
+        if blob.name.endswith(
+            "_risk.parquet"
+        )
+    ],
+    key=lambda blob: blob.time_created)
 
     if not parquet_files:
+
         raise FileNotFoundError(
-            "No risk parquet file found in GCS."
+            "No risk parquet files found in GCS."
         )
 
-    latest_blob = max(
-        parquet_files,
-        key=lambda blob: blob.time_created
-    )
-
-    logging.info(
-        f"Latest GCS file: {latest_blob.name}"
-    )
-
-    return f"gs://{BUCKET_NAME}/{latest_blob.name}"
+    return parquet_files
 
 
 def load_to_bigquery():
@@ -186,27 +184,37 @@ def load_to_bigquery():
     )
 
     # --------------------------------------------------
-    # Find newest file in GCS
+    # Load all parquet files from GCS
     # --------------------------------------------------
 
-    gcs_uri = get_latest_gcs_file()
+    parquet_files = get_all_gcs_files()
+
+    loaded = 0
+
+    for blob in parquet_files:
+
+        gcs_uri = (
+            f"gs://{BUCKET_NAME}/{blob.name}"
+        )
+
+        logging.info(
+            f"Loading {gcs_uri}"
+        )
+
+        load_job = client.load_table_from_uri(
+            gcs_uri,
+            table_ref,
+            job_config=job_config
+        )
+
+        load_job.result()
+
+        loaded += 1
 
     logging.info(
-        f"Loading data from: {gcs_uri}"
+        f"Loaded {loaded} parquet files into BigQuery."
     )
-
-    load_job = client.load_table_from_uri(
-        gcs_uri,
-        table_ref,
-        job_config=job_config
-    )
-
-    load_job.result()
-
-    logging.info(
-        "Data loaded successfully."
-    )
-
+    
     # --------------------------------------------------
     # Remove duplicates
     # --------------------------------------------------

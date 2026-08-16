@@ -66,18 +66,24 @@ with DAG(
     )
 
     load_to_bigquery = BashOperator(
-        task_id="load_to_bigquery",
-        bash_command="python /opt/airflow/scripts/load_to_bigquery.py",
-        cwd="/opt/airflow",
-    )
+    task_id="load_to_bigquery",
+    bash_command="python /opt/airflow/scripts/load_to_bigquery.py",
+    cwd="/opt/airflow",
+)
 
+create_gold_views = BashOperator(
+    task_id="create_gold_views",
+    bash_command="python /opt/airflow/scripts/create_gold_views.py",
+    cwd="/opt/airflow",
+)
 
-    (
-        extract
-        >> validate
-        >> transform
-        >> feature_engineer
-        >> calculate_risk
-        >> load_to_gcs
-        >> load_to_bigquery
-    )
+(
+    extract
+    >> validate
+    >> transform
+    >> feature_engineer
+    >> calculate_risk
+    >> load_to_gcs
+    >> load_to_bigquery
+    >> create_gold_views
+)

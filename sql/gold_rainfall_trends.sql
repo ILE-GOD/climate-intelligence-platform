@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE
+CREATE OR REPLACE VIEW
 `capable-avatar-475900-j5.climate_gold.gold_rainfall_trends`
 AS
 
@@ -13,7 +13,4 @@ SELECT
     soil_saturation_risk
 
 FROM
-`capable-avatar-475900-j5.climate_gold.weather_risk`
-
-ORDER BY
-    date;
+`capable-avatar-475900-j5.climate_gold.weather_risk`;

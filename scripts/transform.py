@@ -15,11 +15,11 @@ logging.basicConfig(
 )
 
 
-def load_latest_json():
+def load_all_json():
 
     raw_directory = Path(DATA_RAW_DIR)
 
-    json_files = list(
+    json_files = sorted(
         raw_directory.glob("*.json")
     )
 
@@ -29,28 +29,23 @@ def load_latest_json():
             "No JSON files found."
         )
 
-    latest_file = max(
-        json_files,
-        key=lambda file: file.stat().st_mtime
-    )
+    files = []
 
-    logging.info(
-        f"Loading file: {latest_file}"
-    )
+    for json_file in json_files:
 
-    logging.info(
-    f"Loading file: {latest_file}"
-)
+        logging.info(
+            f"Loading {json_file.name}"
+        )
 
-    logging.info(
-        f"Processing newest file: {latest_file.name}"
-    )
+        with open(json_file, "r", encoding="utf-8") as file:
 
-    with open(latest_file, "r", encoding="utf-8") as file:
+            data = json.load(file)
 
-        data = json.load(file)
+        files.append(
+            (data, json_file)
+        )
 
-    return data, latest_file
+    return files
 
 
 def transform_weather_data(data):
@@ -147,17 +142,30 @@ def transform():
         "Starting data transformation..."
     )
 
-    data, latest_file = load_latest_json()
+    files = load_all_json()
 
-    df = transform_weather_data(data)
+    processed = []
 
-    save_processed_data(df, latest_file)
+    for data, json_file in files:
+
+        logging.info(
+            f"Transforming {json_file.name}"
+        )
+
+        df = transform_weather_data(data)
+
+        save_processed_data(
+            df,
+            json_file
+        )
+
+        processed.append(df)
 
     logging.info(
-        "Data transformation completed successfully."
+        f"Successfully transformed {len(processed)} files."
     )
 
-    return df
+    return processed
 
 
 if __name__ == "__main__":

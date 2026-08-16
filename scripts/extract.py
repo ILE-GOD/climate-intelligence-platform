@@ -8,18 +8,15 @@ import os
 DATA_RAW_DIR = os.environ.get("DATA_RAW_DIR", "/opt/airflow/data/raw")
 
 # --------------------------------------------------
-# LOCATION CONFIGURATION
-# Reads values from .env
+# NEW: LOCATION CONFIGURATION
+# Reads ALL locations from config/locations.json
 # --------------------------------------------------
 
-LATITUDE = float(os.getenv("LATITUDE", "6.4531"))
-LONGITUDE = float(os.getenv("LONGITUDE", "3.3958"))
-
-LOCATION_NAME = os.getenv("LOCATION_NAME", "lagos")
-
+CONFIG_DIR = Path("config")
+LOCATIONS_FILE = CONFIG_DIR / "locations.json"
 
 # --------------------------------------------------
-# 2. SET UP LOGGING
+# LOGGING
 # --------------------------------------------------
 
 logging.basicConfig(
@@ -27,9 +24,26 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+# --------------------------------------------------
+# NEW: LOAD LOCATIONS
+# --------------------------------------------------
+
+def load_locations():
+    """
+    Load all locations from config/locations.json
+    """
+
+    if not LOCATIONS_FILE.exists():
+        raise FileNotFoundError(
+            f"{LOCATIONS_FILE} not found."
+        )
+
+    with open(LOCATIONS_FILE, "r") as file:
+        return json.load(file)
+
 
 # --------------------------------------------------
-# 3. FETCH WEATHER DATA
+# FETCH WEATHER DATA
 # --------------------------------------------------
 
 def fetch_weather(lat, lon):
@@ -47,22 +61,28 @@ def fetch_weather(lat, lon):
         "&timezone=Africa%2FLagos"
     )
 
-    response = requests.get(url, timeout=10)
+    response = requests.get(
+        url,
+        timeout=10
+    )
 
     response.raise_for_status()
 
-    data = response.json()
-
-    return data
+    return response.json()
 
 
 # --------------------------------------------------
-# 4. SAVE RAW DATA
+# MODIFIED: SAVE RAW DATA
 # --------------------------------------------------
 
-def save_raw(data, location_name):
+def save_raw(
+    data,
+    location_name,
+    latitude,
+    longitude
+):
     """
-    Save raw API response as a timestamped JSON file.
+    Save raw API response.
     """
 
     raw_directory = Path(DATA_RAW_DIR)
@@ -76,19 +96,26 @@ def save_raw(data, location_name):
         "%Y%m%d_%H%M%S"
     )
 
-    filename = f"{location_name}_{timestamp}.json"
+    filename = (
+        f"{location_name.lower()}_{timestamp}.json"
+    )
 
     file_path = raw_directory / filename
 
-    # Add metadata directly into the API response
     data["metadata"] = {
+
         "location": location_name,
-        "latitude": LATITUDE,
-        "longitude": LONGITUDE,
+
+        "latitude": latitude,
+
+        "longitude": longitude,
+
         "extracted_at": datetime.utcnow().isoformat()
+
     }
 
     with open(file_path, "w") as file:
+
         json.dump(
             data,
             file,
@@ -97,49 +124,63 @@ def save_raw(data, location_name):
 
     return file_path
 
+
 # --------------------------------------------------
-# 5. PIPELINE FUNCTION
+# MODIFIED: PIPELINE
 # --------------------------------------------------
 
 def extract():
     """
-    Execute the complete data extraction process.
-
-    This function:
-    1. Fetches weather data from the API.
-    2. Saves the raw response to data/raw.
-    3. Returns the path to the saved file.
+    Extract weather data for every location.
     """
 
     logging.info(
         "Starting weather data extraction..."
     )
 
-    # Fetch data from API
-    weather_data = fetch_weather(
-        LATITUDE,
-        LONGITUDE
-    )
+    locations = load_locations()
+
+    saved_files = []
+
+    for city in locations:
+
+        location_name = city["name"]
+
+        latitude = city["latitude"]
+
+        longitude = city["longitude"]
+
+        logging.info(
+            f"Fetching weather for {location_name}..."
+        )
+
+        weather_data = fetch_weather(
+            latitude,
+            longitude
+        )
+
+        file_path = save_raw(
+            weather_data,
+            location_name,
+            latitude,
+            longitude
+        )
+
+        logging.info(
+            f"Saved: {file_path.name}"
+        )
+
+        saved_files.append(file_path)
 
     logging.info(
-        "Weather data successfully fetched."
+        f"Successfully extracted data for {len(saved_files)} locations."
     )
 
-    # Save raw data
-    file_path = save_raw(
-        weather_data,
-        LOCATION_NAME
-    )
-
-    logging.info(
-        f"Raw weather data saved to: {file_path}"
-    )
-
-    return file_path
+    return saved_files
 
 
 # --------------------------------------------------
-# 6. RUN DIRECTLY
+# RUN
 # --------------------------------------------------
 
 if __name__ == "__main__":
