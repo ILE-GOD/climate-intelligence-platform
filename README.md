@@ -141,14 +141,7 @@ The platform also provides sector-specific advisory information for **agricultur
 
 # 🌐 Data Sources
 
-The platform currently consumes weather data from publicly available  Open-Meteo APIs and is designed to support multiple weather providers as follows; 
-
-| Source | Purpose | Documentation |
-|---------|----------|---------------|
-| Open-Meteo API | Weather forecasts | https://open-meteo.com/en/docs |
-| NASA POWER *(Future)* | Climate data | https://power.larc.nasa.gov |
-| OpenWeather *(Future)* | Weather observations | https://openweathermap.org/api |
-| NiMet *(Future)* | Nigerian weather | https://nimet.gov.ng |
+The platform currently consumes weather data from publicly available  Open-Meteo APIs https://open-meteo.com/en/docs
 
 ---
 
@@ -294,32 +287,6 @@ Visuals showing:
 ## 📊 Dashboard
 
 [View the Live Climate Intelligence Dashboard](https://datastudio.google.com/reporting/f04d0d6e-329c-47d2-8ac8-60de333a968c)
-
----
-
-# 🛣️ Project Roadmap
-
-| Feature | Status |
-|----------|--------|
-| Project Setup | ✅ |
-| Docker Environment | ✅ |
-| Apache Airflow | ✅ |
-| Weather API Integration | ✅ |
-| Data Validation | ✅ |
-| Feature Engineering | ✅ |
-| Risk Calculation | ✅ |
-| Incremental Processing | ✅ |
-| Google Cloud Storage | ✅ |
-| BigQuery Integration | ✅ |
-| Looker Studio Dashboard | 🚧 |
-| Data Quality Tests | 🚧 |
-| GitHub Actions CI/CD | 🚧 |
-| dbt Transformations | 🚧 |
-| Great Expectations | 🚧 |
-| Terraform Deployment | 🚧 |
-| Kubernetes Deployment | 🚧 |
-| Machine Learning Flood Prediction | 🚧 |
-| Real-Time Streaming (Kafka) | 🚧 |
 
 ---
 
