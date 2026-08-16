@@ -347,6 +347,10 @@ okomilechukwudaniel@gmail.com
 
 🔗 LinkedIn: https://www.linkedin.com/in/daniel-okom-748798242
 
+🔗 Presentation Video: https://drive.google.com/file/d/1f09gMTNxJvPm1bYjrKeuB36EmARN4M1K/view?usp=drive_link
+
+🔗 Presentation Slide: https://docs.google.com/presentation/d/1nMCCrI-YuE6uYs0n4JDoofblq1HUOOVc/edit?usp=drive_link&ouid=116368343289903499481&rtpof=true&sd=true
+
 ---
 
 > **Demonstration of modern Data Engineering practices for climate intelligence and flood early warning.**
